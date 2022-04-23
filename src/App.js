@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { Grid, Paper } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux'
 import * as ACTIONS from './redux/actionTypes';
 import RecipeReviewCard from './components/Card';
@@ -18,27 +18,14 @@ const useStyles = makeStyles((theme) =>({
   },
 }));
 
-const gridStyles = makeStyles((theme)=>({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    height: 140,
-    width: 100,
-  },
-  control: {
-    padding: theme.spacing(2),
-  }
-}));
 
 function App() {
   const classes = useStyles();
-  const gridClasses = useStyles();
   const [search, setSearch] = useState("");
-  const [query, setQuery] = useState("chicken");
+  const [query, setQuery] = useState("lasagna");
 
 
-  const {recipes} = useSelector(state => state.data);
+  const {recipes, loading} = useSelector(state => state.data);
 
   const updateSearch = () =>{
     setQuery(search);
@@ -50,7 +37,7 @@ function App() {
 
   useEffect(()=>{
     dispatch({type: ACTIONS.FETCH_RECIPE_START, payload: query });
-  }, [query])
+  }, [query, dispatch])
 
   return (
     <div className="App">
@@ -58,7 +45,7 @@ function App() {
       <form className={classes.root} noValidate autoComplete="off">
         <TextField 
           id="outlined-basic" 
-          label="Outlined" 
+          label="Search a recipe" 
           variant="outlined" 
           value={search} onChange={(e) => setSearch(e.target.value)} 
         />
@@ -70,20 +57,19 @@ function App() {
             Search
         </Button>
       </form>
-        <Grid container className={gridClasses.root}>
+      { loading ? <div>Loading...</div> :
+        <Grid container  spacing={2} columns={4}>
           <Grid item xs={12}>
             <Grid container justify="center">
               {recipes && recipes.hits && recipes.hits.map((item, index) => (
-                <Grid key={index} item>
-                  <Card/>
+                <Grid key={index} item  md={3}>
+                  <RecipeReviewCard image={item.recipe.image} title={item.recipe.label} calories={item.recipe.calories} ingredients={item.recipe.ingredients}/>
                 </Grid>
               ))}
             </Grid>
           </Grid>
         </Grid>
-        {/* {recipes && recipes.hits && recipes.hits.map((item, index) => (
-          <h4>{item.recipe.label}</h4>
-          ))} */}
+      }
     </div>
   );
 }

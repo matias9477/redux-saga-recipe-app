@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const YOUR_APP_ID = "5ae3c2f0";
-const YOUR_APP_KEY = "67195c8ac78fea91e737b496c535fc1f";
+const YOUR_APP_ID = process.env.REACT_APP_ID;
+const YOUR_APP_KEY = process.env.REACT_APP_KEY;
 
 export const getRecipes = async(query) => {
     
